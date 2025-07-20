@@ -1,12 +1,11 @@
 {
   "name": "@coddieapp/mcp-server",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "MCP server for Coddie project planning application",
   "type": "module",
-  "bin": "./build/index.js",
-  "files": [
-    "build/"
-  ],
+  "bin": {
+    "coddie-mcp": "./build/index.js"
+  },
   "scripts": {
     "build": "tsc",
     "dev": "tsc && node build/index.js",
@@ -22,6 +21,9 @@
     "rimraf": "^6.0.1",
     "typescript": "^5.8.3"
   },
+  "files": [
+    "build"
+  ],
   "keywords": [
     "mcp",
     "model-context-protocol",
