@@ -1,18 +1,16 @@
 #!/usr/bin/env node
-import { McpServer, ResourceTemplate } from "@modelcontextprotocol/sdk/server/mcp.js";
+import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js";
 import { z } from "zod";
-
-// Import tool functions
 import { listProjects, getProjectInfo, getContext } from "./tools/projects.js";
 import { listFeatures } from "./tools/features.js";
 import { listPhases, getPhase, listSteps } from "./tools/phases.js";
 import { listRules, getRule } from "./tools/rules.js";
+import { setCoddieApiKey } from "./services/helper.js";
 
-// Create server instance
 const server = new McpServer({
   name: "coddie",
-  version: "1.0.0"
+  version: "1.0.5"
 });
 
 // Register tools individually
@@ -33,7 +31,7 @@ server.registerTool("list_projects", {
 });
 
 server.registerTool("get_project_info", {
-  description: "Get project details (name, description, tech stack, features overview)",
+  description: "Get project details (name, description, status, and progress summary)",
   inputSchema: {
     projectId: z.string().describe("The ID of the project to get info for")
   }
@@ -105,7 +103,7 @@ server.registerTool("list_phases", {
 });
 
 server.registerTool("get_phase", {
-  description: "Get phase details (title, description, status, etc.)",
+  description: "Get phase details (title, description, status, and progress)",
   inputSchema: {
     projectId: z.string().describe("The ID of the project the phase belongs to"),
     phaseId: z.string().describe("The ID of the phase to get details for")
@@ -181,6 +179,26 @@ server.registerTool("get_rule", {
 
 
 async function main() {
+  // Try to parse the API key at startup
+  try {
+    const args = process.argv;
+    const apiKeyIndex = args.indexOf('--api-key');
+    if (apiKeyIndex === -1) {
+      throw new Error('API key is required. Please provide --api-key argument.');
+    }
+
+    const apiKey = args[apiKeyIndex + 1];
+
+    if (!apiKey || apiKey.startsWith('--')) {
+      throw new Error('Invalid API key provided. Please provide a valid API key after --api-key flag.');
+    }
+    setCoddieApiKey(apiKey);
+    console.error("API key parsed successfully at startup");
+  } catch (error) {
+    console.error("Failed to parse API key:", error instanceof Error ? error.message : error);
+    process.exit(1);
+  }
+
   const transport = new StdioServerTransport();
   await server.connect(transport);
   console.error("Coddie MCP Server running on stdio");
