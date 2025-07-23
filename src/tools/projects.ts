@@ -7,8 +7,23 @@ import { toLeanProject, toLeanProjects } from "./transformers.js";
  */
 export async function listProjects(): Promise<LeanProject[]> {
   try {
-    const projects = await makeCoddieRequest<Project[]>("/projects", "GET");
-    return toLeanProjects(projects || []);
+    const response = await makeCoddieRequest<any>("/projects", "GET");
+
+    // Handle different response structures
+    let projects: Project[] = [];
+    if (Array.isArray(response)) {
+      projects = response;
+    } else if (response && typeof response === 'object' && 'data' in response) {
+      projects = Array.isArray(response.data) ? response.data : [];
+    } else if (response && typeof response === 'object' && 'projects' in response) {
+      projects = Array.isArray(response.projects) ? response.projects : [];
+    } else {
+      console.error(`[DEBUG] Unexpected response structure: ${JSON.stringify(response, null, 2)}`);
+      projects = [];
+    }
+
+    console.error(`[DEBUG] Processed projects: ${JSON.stringify(projects, null, 2)}`);
+    return toLeanProjects(projects);
   } catch (error) {
     console.error("Error listing projects:", error);
     return [];

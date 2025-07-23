@@ -5,7 +5,9 @@ import {
 
 // Transform full project to lean project
 export function toLeanProject(project: Project): LeanProject {
-  return {
+  console.error(`[DEBUG] Transforming project: ${JSON.stringify(project, null, 2)}`);
+
+  const leanProject = {
     id: project.id,
     name: project.name,
     description: project.description,
@@ -17,6 +19,9 @@ export function toLeanProject(project: Project): LeanProject {
     },
     last_updated_at: project.updated_at,
   };
+
+  console.error(`[DEBUG] Transformed to lean project: ${JSON.stringify(leanProject, null, 2)}`);
+  return leanProject;
 }
 
 // Transform full feature to lean feature

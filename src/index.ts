@@ -19,6 +19,10 @@ server.registerTool("list_projects", {
   inputSchema: {}
 }, async () => {
   const projects = await listProjects();
+  const projectsAsObject = projects.reduce((acc, project, index) => {
+    acc[`project_${index}`] = project;
+    return acc;
+  }, {} as { [key: string]: typeof projects[0] });
   return {
     content: [
       {
@@ -26,7 +30,7 @@ server.registerTool("list_projects", {
         text: JSON.stringify(projects, null, 2)
       }
     ],
-    structuredContent: { projects }
+    structuredContent: projectsAsObject
   };
 });
 
@@ -73,6 +77,10 @@ server.registerTool("list_features", {
   }
 }, async (args) => {
   const features = await listFeatures(args.projectId);
+  const featuresAsObject = features.reduce((acc, feature, index) => {
+    acc[`feature_${index}`] = feature;
+    return acc;
+  }, {} as { [key: string]: typeof features[0] });
   return {
     content: [
       {
@@ -80,7 +88,7 @@ server.registerTool("list_features", {
         text: JSON.stringify(features, null, 2)
       }
     ],
-    structuredContent: { features }
+    structuredContent: featuresAsObject
   };
 });
 
@@ -91,6 +99,10 @@ server.registerTool("list_phases", {
   }
 }, async (args) => {
   const phases = await listPhases(args.projectId);
+  const phasesAsObject = phases.reduce((acc, phase, index) => {
+    acc[`phase_${index}`] = phase;
+    return acc;
+  }, {} as { [key: string]: typeof phases[0] });
   return {
     content: [
       {
@@ -98,7 +110,7 @@ server.registerTool("list_phases", {
         text: JSON.stringify(phases, null, 2)
       }
     ],
-    structuredContent: { phases }
+    structuredContent: phasesAsObject
   };
 });
 
@@ -129,6 +141,10 @@ server.registerTool("list_steps", {
   }
 }, async (args) => {
   const steps = await listSteps(args.projectId, args.phaseId);
+  const stepsAsObject = steps.reduce((acc, step, index) => {
+    acc[`step_${index}`] = step;
+    return acc;
+  }, {} as { [key: string]: typeof steps[0] });
   return {
     content: [
       {
@@ -136,7 +152,7 @@ server.registerTool("list_steps", {
         text: JSON.stringify(steps, null, 2)
       }
     ],
-    structuredContent: { steps }
+    structuredContent: stepsAsObject
   };
 });
 
@@ -147,6 +163,10 @@ server.registerTool("list_rules", {
   }
 }, async (args) => {
   const rules = await listRules(args.projectId);
+  const rulesAsObject = rules.reduce((acc, rule, index) => {
+    acc[`rule_${index}`] = rule;
+    return acc;
+  }, {} as { [key: string]: typeof rules[0] });
   return {
     content: [
       {
@@ -154,7 +174,7 @@ server.registerTool("list_rules", {
         text: JSON.stringify(rules, null, 2)
       }
     ],
-    structuredContent: { rules }
+    structuredContent: rulesAsObject
   };
 });
 

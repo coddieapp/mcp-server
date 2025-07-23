@@ -1,0 +1,21 @@
+{
+    "mcpServers": {
+      "Coddie": {
+        "command": "npx",
+        "args": [
+          "-y",
+          "@coddieapp/mcp-server@latest",
+          "--api-key",
+          "mfKgtheo2oCQPAT8-nAHGVOa18fO3D-9-CgPwQTeqGc"
+        ]
+      },
+      "coddie": {
+        "command": "node",
+        "args": [
+          "C:\\Users\\user\\Desktop\\coddie-mcp\\build\\index.js",
+          "--api-key",
+          "mfKgtheo2oCQPAT8-nAHGVOa18fO3D-9-CgPwQTeqGc"
+        ]
+      }
+    }
+  }
