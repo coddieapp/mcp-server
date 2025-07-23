@@ -7,23 +7,8 @@ import { toLeanProject, toLeanProjects } from "./transformers.js";
  */
 export async function listProjects(): Promise<LeanProject[]> {
   try {
-    const response = await makeCoddieRequest<any>("/projects", "GET");
-
-    // Handle different response structures
-    let projects: Project[] = [];
-    if (Array.isArray(response)) {
-      projects = response;
-    } else if (response && typeof response === 'object' && 'data' in response) {
-      projects = Array.isArray(response.data) ? response.data : [];
-    } else if (response && typeof response === 'object' && 'projects' in response) {
-      projects = Array.isArray(response.projects) ? response.projects : [];
-    } else {
-      console.error(`[DEBUG] Unexpected response structure: ${JSON.stringify(response, null, 2)}`);
-      projects = [];
-    }
-
-    console.error(`[DEBUG] Processed projects: ${JSON.stringify(projects, null, 2)}`);
-    return toLeanProjects(projects);
+    const response = await makeCoddieRequest<{success: boolean, data: Project[]}>("/projects", "GET");
+    return toLeanProjects(response.data || []);
   } catch (error) {
     console.error("Error listing projects:", error);
     return [];
@@ -35,8 +20,8 @@ export async function listProjects(): Promise<LeanProject[]> {
  */
 export async function getProjectInfo(projectId: string): Promise<LeanProject | null> {
   try {
-    const project = await makeCoddieRequest<Project>(`/projects/${projectId}`, "GET");
-    return project ? toLeanProject(project) : null;
+    const project = await makeCoddieRequest<{success: boolean, data: Project}>(`/projects/${projectId}`, "GET");
+    return project.data ? toLeanProject(project.data) : null;
   } catch (error) {
     console.error("Error getting project info:", error);
     return null;
@@ -48,11 +33,11 @@ export async function getProjectInfo(projectId: string): Promise<LeanProject | n
  */
 export async function getContext(projectId: string): Promise<string | null> {
   try {
-    const project = await makeCoddieRequest<Project>(`/projects/${projectId}`, "GET");
-    if (!project) return null;
+    const project = await makeCoddieRequest<{success: boolean, data: Project}>(`/projects/${projectId}`, "GET");
+    if (!project.data) return null;
 
     // Return context summary or build from project status
-    return project.context_summary;
+    return project.data.context_summary;
   } catch (error) {
     console.error("Error getting project context:", error);
     return null;

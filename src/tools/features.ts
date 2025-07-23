@@ -5,10 +5,10 @@ import { toLeanFeatures } from "./transformers.js";
 /**
  * List all features for a specific project
  */
-export async function listFeatures(projectId: string): Promise<LeanFeature[]> {
+export async function listFeatures(projectId: string) {
   try {
-    const features = await makeCoddieRequest<Feature[]>(`/projects/${projectId}/features`, "GET");
-    return toLeanFeatures(features || []);
+    const response = await makeCoddieRequest<{success: boolean, data: Feature[]}>(`/projects/${projectId}/features`, "GET");
+    return toLeanFeatures(response.data || []);
   } catch (error) {
     console.error("Error listing features:", error);
     return [];
